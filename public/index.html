@@ -13,15 +13,15 @@
     .join-screen input { padding: 10px; font-size: 1rem; border-radius: 5px; border: none; text-align: center; }
     .join-screen button { padding: 10px 20px; font-size: 1.1rem; background: #1e90ff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
 
-    /* --- 対戦相手エリア（縦スクロール対応） --- */
+    /* --- 対戦相手エリア（余白カット） --- */
     .opponents-area {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
       background: #1a1a1a;
-      padding: 8px;
+      padding: 6px;
       border-bottom: 2px solid #444;
-      max-height: 120px;
+      max-height: 100px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
@@ -29,7 +29,7 @@
       background: #333;
       border: 1px solid #555;
       border-radius: 6px;
-      padding: 6px 12px;
+      padding: 4px 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -41,27 +41,37 @@
       background: #443a1a;
     }
     
-    .field-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+    /* --- 中央フィールドエリア（上下余白を極小化） --- */
+    .field-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px 0;
+    }
     
-    /* --- 山札エリア（縮小版） --- */
-    .decks-container { display: flex; gap: 10px; }
-    .deck { width: 55px; height: 75px; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; border: 1.5px solid #fff; font-size: 0.65rem; }
+    /* --- 山札エリア --- */
+    .decks-container { display: flex; gap: 8px; }
+    .deck { width: 55px; height: 70px; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; border: 1.5px solid #fff; font-size: 0.65rem; }
     .deck-mine { background: #8b0000; }
     .deck-action { background: #1e90ff; }
     .deck-event { background: #2e8b57; }
     .deck-count { font-size: 0.95rem; margin-top: 2px; }
 
-    .game-log { font-size: 0.8rem; color: #ffcc00; background: rgba(0,0,0,0.6); padding: 6px 12px; border-radius: 12px; max-width: 90%; text-align: center; word-break: break-all; }
+    .game-log { font-size: 0.75rem; color: #ffcc00; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 8px; max-width: 95%; text-align: center; word-break: break-all; }
 
-    .my-area { background: #1a1a1a; border-top: 2px solid #444; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-    .cards-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; min-height: 65px; }
+    /* --- 自分の手札エリア（余白を削減） --- */
+    .my-area { background: #1a1a1a; border-top: 2px solid #444; padding: 6px 8px; display: flex; flex-direction: column; gap: 4px; }
+    .cards-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; min-height: 55px; }
     
-    .card { min-width: 45px; height: 65px; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; font-size: 0.7rem; border: 1px solid #ccc; cursor: pointer; flex-shrink: 0; }
+    .card { min-width: 42px; height: 55px; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; font-size: 0.65rem; border: 1px solid #ccc; cursor: pointer; flex-shrink: 0; }
     .card-score { background: #fff; color: #000; }
     .card-bomb { background: #ff4500; color: #fff; border: 2px solid #ffd700; }
     .card-event { background: #2e8b57; color: #fff; }
 
-    .btn { padding: 12px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; color: #fff; background: #1e90ff; cursor: pointer; width: 100%; }
+    .btn { padding: 10px; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: bold; color: #fff; background: #1e90ff; cursor: pointer; width: 100%; }
     .btn:disabled { background: #555; color: #888; cursor: not-allowed; }
   </style>
 </head>
@@ -88,10 +98,10 @@
   </div>
 
   <div class="my-area">
-    <div style="font-size: 0.75rem; color: #888;">自分の得点カード（自分のみ公開）</div>
+    <div style="font-size: 0.7rem; color: #888;">自分の得点カード（自分のみ公開）</div>
     <div class="cards-scroll" id="myScoreCards"></div>
 
-    <div style="font-size: 0.75rem; color: #888;">所持イベント（タップで使用）</div>
+    <div style="font-size: 0.7rem; color: #888;">所持イベント（タップで使用）</div>
     <div class="cards-scroll" id="myEventCards"></div>
 
     <button class="btn" id="drawBtn" disabled>行動山札から1枚引く</button>
