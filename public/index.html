@@ -13,27 +13,28 @@
     .join-screen input { padding: 10px; font-size: 1rem; border-radius: 5px; border: none; text-align: center; }
     .join-screen button { padding: 10px 20px; font-size: 1.1rem; background: #1e90ff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
 
-    /* --- 対戦相手エリア（スクロール対応） --- */
+    /* --- 対戦相手エリア（縦スクロール対応） --- */
     .opponents-area {
       display: flex;
-      gap: 8px;
+      flex-direction: column; /* 縦に並べる */
+      gap: 6px;
       background: #1a1a1a;
       padding: 8px;
       border-bottom: 2px solid #444;
-      overflow-x: auto; /* 横スクロールを許可 */
-      white-space: nowrap;
+      max-height: 120px; /* 縦幅の上限を設定 */
+      overflow-y: auto;  /* 縦スクロールを有効化 */
       -webkit-overflow-scrolling: touch;
     }
     .opponent-card {
       background: #333;
       border: 1px solid #555;
-      border-radius: 8px;
-      padding: 6px 10px;
-      min-width: 100px; /* 幅をコンパクトに固定 */
-      max-width: 130px;
-      text-align: center;
-      font-size: 0.75rem;
-      flex-shrink: 0; /* つぶれないように保護 */
+      border-radius: 6px;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      width: 100%;
     }
     .opponent-card.active {
       border: 2px solid #ffcc00;
@@ -72,7 +73,7 @@
     <button id="startBtn" style="display:none; background: #2e8b57;">ゲームを開始する (3名以上)</button>
   </div>
 
-  <!-- 対戦画面 (横スクロール可能) -->
+  <!-- 対戦画面 (縦スクロール可能) -->
   <div class="opponents-area" id="opponentsArea"></div>
 
   <div class="field-area">
@@ -136,13 +137,21 @@
         document.getElementById('logBox').innerText = state.logs[state.logs.length - 1];
       }
 
-      // 他プレイヤー状況
+      // 他プレイヤー状況 (リスト表示＆縦スクロール)
       const oppArea = document.getElementById('opponentsArea');
       oppArea.innerHTML = '';
       state.opponents.forEach(opp => {
         const div = document.createElement('div');
         div.className = `opponent-card ${opp.isCurrentTurn ? 'active' : ''}`;
-        div.innerHTML = `<div style="font-weight:bold; overflow:hidden; text-overflow:ellipsis;">${opp.name}</div><div style="font-size:0.7rem; color:#aaa;">得点:${opp.scoreCardCount}枚 EV:${opp.eventCardCount}枚</div>`;
+        div.innerHTML = `
+          <div style="font-weight:bold; overflow:hidden; text-overflow:ellipsis; max-width:120px; white-space:nowrap;">
+            ${opp.name} ${opp.isCurrentTurn ? '◀ ターン' : ''}
+          </div>
+          <div style="font-size:0.75rem; color:#ccc;">
+            得点: <span style="color:#ffcc00; font-weight:bold;">${opp.scoreCardCount}</span>枚 / 
+            EV: <span style="color:#2e8b57; font-weight:bold;">${opp.eventCardCount}</span>枚
+          </div>
+        `;
         oppArea.appendChild(div);
       });
 
