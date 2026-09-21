@@ -14,39 +14,40 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center; /* 画面中央寄りに配置 */
       overflow: hidden;
-      /* 上部ステータスバー・アドレスバー対策でしっかり余白を確保 */
-      padding-top: max(45px, env(safe-area-inset-top));
-      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      /* iPhoneの時刻・ダイナミックアイランド対策：大きく上部余白を取る */
+      padding-top: max(70px, env(safe-area-inset-top));
+      padding-bottom: max(25px, env(safe-area-inset-bottom));
     }
     
     .join-screen { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; z-index: 100; }
     .join-screen input { padding: 10px; font-size: 1rem; border-radius: 5px; border: none; text-align: center; }
     .join-screen button { padding: 10px 20px; font-size: 1.1rem; background: #1e90ff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
 
-    /* --- 対戦相手エリア（被り防止＆スクロール対応） --- */
+    /* --- 対戦相手エリア（ダイナミックアイランド回避） --- */
     .opponents-area {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
       background: #1a1a1a;
       padding: 8px 10px;
       border-bottom: 2px solid #444;
-      max-height: 140px;
+      max-height: 120px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       flex-shrink: 0;
+      margin-bottom: 5px;
     }
     .opponent-card {
       background: #333;
       border: 1px solid #555;
       border-radius: 6px;
-      padding: 6px 12px;
+      padding: 5px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       width: 100%;
     }
     .opponent-card.active {
@@ -54,15 +55,15 @@
       background: #443a1a;
     }
     
-    /* --- 中央フィールドエリア（真ん中にコンパクトに寄せる） --- */
+    /* --- 中央フィールドエリア（縦中央に集約） --- */
     .field-area {
-      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       padding: 10px 0;
+      flex-shrink: 0;
     }
     
     /* --- 山札エリア --- */
@@ -75,24 +76,25 @@
 
     .game-log { font-size: 0.8rem; color: #ffcc00; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 8px; max-width: 95%; text-align: center; word-break: break-all; }
 
-    /* --- 自分の手札エリア（下部バー被り防止） --- */
+    /* --- 自分の手札エリア --- */
     .my-area {
       background: #1a1a1a;
       border-top: 2px solid #444;
-      padding: 10px;
+      padding: 8px 10px;
       display: flex;
       flex-direction: column;
       gap: 6px;
       flex-shrink: 0;
+      margin-top: 5px;
     }
-    .cards-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; min-height: 55px; }
+    .cards-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; min-height: 50px; }
     
-    .card { min-width: 42px; height: 55px; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; font-size: 0.65rem; border: 1px solid #ccc; cursor: pointer; flex-shrink: 0; }
+    .card { min-width: 40px; height: 50px; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; font-size: 0.65rem; border: 1px solid #ccc; cursor: pointer; flex-shrink: 0; }
     .card-score { background: #fff; color: #000; }
     .card-bomb { background: #ff4500; color: #fff; border: 2px solid #ffd700; }
     .card-event { background: #2e8b57; color: #fff; }
 
-    .btn { padding: 12px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; color: #fff; background: #1e90ff; cursor: pointer; width: 100%; }
+    .btn { padding: 10px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: bold; color: #fff; background: #1e90ff; cursor: pointer; width: 100%; }
     .btn:disabled { background: #555; color: #888; cursor: not-allowed; }
   </style>
 </head>
