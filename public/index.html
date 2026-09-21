@@ -16,13 +16,13 @@
     /* --- 対戦相手エリア（縦スクロール対応） --- */
     .opponents-area {
       display: flex;
-      flex-direction: column; /* 縦に並べる */
+      flex-direction: column;
       gap: 6px;
       background: #1a1a1a;
       padding: 8px;
       border-bottom: 2px solid #444;
-      max-height: 120px; /* 縦幅の上限を設定 */
-      overflow-y: auto;  /* 縦スクロールを有効化 */
+      max-height: 120px;
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
     .opponent-card {
@@ -41,20 +41,22 @@
       background: #443a1a;
     }
     
-    .field-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
-    .decks-container { display: flex; gap: 12px; }
-    .deck { width: 70px; height: 95px; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; border: 2px solid #fff; font-size: 0.75rem; }
+    .field-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+    
+    /* --- 山札エリア（縮小版） --- */
+    .decks-container { display: flex; gap: 10px; }
+    .deck { width: 55px; height: 75px; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; border: 1.5px solid #fff; font-size: 0.65rem; }
     .deck-mine { background: #8b0000; }
     .deck-action { background: #1e90ff; }
     .deck-event { background: #2e8b57; }
-    .deck-count { font-size: 1.1rem; margin-top: 4px; }
+    .deck-count { font-size: 0.95rem; margin-top: 2px; }
 
     .game-log { font-size: 0.8rem; color: #ffcc00; background: rgba(0,0,0,0.6); padding: 6px 12px; border-radius: 12px; max-width: 90%; text-align: center; word-break: break-all; }
 
     .my-area { background: #1a1a1a; border-top: 2px solid #444; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-    .cards-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; min-height: 70px; }
+    .cards-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; min-height: 65px; }
     
-    .card { min-width: 50px; height: 70px; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; font-size: 0.75rem; border: 1px solid #ccc; cursor: pointer; flex-shrink: 0; }
+    .card { min-width: 45px; height: 65px; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; font-size: 0.7rem; border: 1px solid #ccc; cursor: pointer; flex-shrink: 0; }
     .card-score { background: #fff; color: #000; }
     .card-bomb { background: #ff4500; color: #fff; border: 2px solid #ffd700; }
     .card-event { background: #2e8b57; color: #fff; }
@@ -137,7 +139,7 @@
         document.getElementById('logBox').innerText = state.logs[state.logs.length - 1];
       }
 
-      // 他プレイヤー状況 (リスト表示＆縦スクロール)
+      // 他プレイヤー状況
       const oppArea = document.getElementById('opponentsArea');
       oppArea.innerHTML = '';
       state.opponents.forEach(opp => {
