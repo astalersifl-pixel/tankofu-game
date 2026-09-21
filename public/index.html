@@ -4,228 +4,159 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>炭鉱夫 (Tankofu)</title>
+  <script src="/socket.io/socket.io.js"></script>
   <style>
-    /* 全体設定 */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
-    body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      background-color: #2c2c2c;
-      color: #fff;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-    }
-
-    /* 上部：他プレイヤーの状況エリア */
-    .opponents-area {
-      display: flex;
-      justify-content: space-around;
-      background-color: #1a1a1a;
-      padding: 10px 5px;
-      border-bottom: 2px solid #444;
-    }
-    .opponent-card {
-      background-color: #333;
-      border: 1px solid #555;
-      border-radius: 8px;
-      padding: 6px;
-      width: 30%;
-      text-align: center;
-      font-size: 0.75rem;
-    }
-    .opponent-name {
-      font-weight: bold;
-      color: #ffcc00;
-      margin-bottom: 4px;
-    }
-    .opponent-stats {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 4px;
-    }
-
-    /* 中央：山札・ログエリア */
-    .field-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      padding: 10px;
-    }
-    .decks-container {
-      display: flex;
-      gap: 15px;
-    }
-    .deck {
-      width: 75px;
-      height: 105px;
-      border-radius: 6px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-      border: 2px solid #fff;
-      font-size: 0.8rem;
-    }
-    .deck-red { background-color: #8b0000; }
-    .deck-num { background-color: #1e90ff; }
-    .deck-event { background-color: #2e8b57; }
-    .deck-count {
-      font-size: 1.2rem;
-      margin-top: 4px;
-    }
-
-    .game-log {
-      font-size: 0.85rem;
-      color: #aaa;
-      background: rgba(0,0,0,0.4);
-      padding: 6px 12px;
-      border-radius: 12px;
-    }
-
-    /* 下部：自分の手札・アクションエリア */
-    .my-area {
-      background-color: #1a1a1a;
-      border-top: 2px solid #444;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .hand-section {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .section-title {
-      font-size: 0.75rem;
-      color: #888;
-    }
-    .cards-scroll {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body { font-family: sans-serif; background-color: #2c2c2c; color: #fff; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
     
-    /* カード共通デザイン */
-    .card {
-      min-width: 55px;
-      height: 75px;
-      border-radius: 5px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
-      font-size: 0.8rem;
-      border: 1px solid #ccc;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      cursor: pointer;
-    }
+    .join-screen { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; z-index: 100; }
+    .join-screen input { padding: 10px; font-size: 1rem; border-radius: 5px; border: none; text-align: center; }
+    .join-screen button { padding: 10px 20px; font-size: 1.1rem; background: #1e90ff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+
+    .opponents-area { display: flex; justify-content: space-around; background: #1a1a1a; padding: 10px 5px; border-bottom: 2px solid #444; }
+    .opponent-card { background: #333; border: 1px solid #555; border-radius: 8px; padding: 6px; width: 30%; text-align: center; font-size: 0.75rem; }
+    .opponent-card.active { border: 2px solid #ffcc00; background: #443a1a; }
+    
+    .field-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
+    .decks-container { display: flex; gap: 15px; }
+    .deck { width: 75px; height: 100px; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; border: 2px solid #fff; font-size: 0.8rem; }
+    .deck-mine { background: #8b0000; }
+    .deck-action { background: #1e90ff; }
+    .deck-event { background: #2e8b57; }
+    .deck-count { font-size: 1.2rem; margin-top: 4px; }
+
+    .game-log { font-size: 0.85rem; color: #ffcc00; background: rgba(0,0,0,0.6); padding: 6px 12px; border-radius: 12px; max-width: 90%; text-align: center; }
+
+    .my-area { background: #1a1a1a; border-top: 2px solid #444; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .cards-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; min-height: 75px; }
+    
+    .card { min-width: 55px; height: 75px; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; font-size: 0.8rem; border: 1px solid #ccc; cursor: pointer; }
     .card-score { background: #fff; color: #000; }
-    .card-joker { background: #ff4500; color: #fff; border: 2px solid #ffd700; }
+    .card-bomb { background: #ff4500; color: #fff; border: 2px solid #ffd700; }
     .card-event { background: #2e8b57; color: #fff; }
 
-    /* アクションボタン */
-    .action-panel {
-      display: flex;
-      gap: 10px;
-      margin-top: 5px;
-    }
-    .btn {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: bold;
-      color: #fff;
-      cursor: pointer;
-      box-shadow: 0 3px 0 rgba(0,0,0,0.4);
-    }
-    .btn-draw { background-color: #1e90ff; }
-    .btn-draw:active { transform: translateY(2px); box-shadow: none; }
-    .btn-disabled { background-color: #555; color: #888; cursor: not-allowed; box-shadow: none; }
+    .btn { padding: 12px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; color: #fff; background: #1e90ff; cursor: pointer; width: 100%; }
+    .btn:disabled { background: #555; color: #888; cursor: not-allowed; }
   </style>
 </head>
 <body>
 
-  <!-- 上部：他のプレイヤーの状況 -->
-  <div class="opponents-area">
-    <div class="opponent-card">
-      <div class="opponent-name">プレイヤー 2</div>
-      <div class="opponent-stats">
-        <span>得点: 3枚</span>
-        <span>EV: 1枚</span>
-      </div>
-    </div>
-    <div class="opponent-card">
-      <div class="opponent-name">プレイヤー 3</div>
-      <div class="opponent-stats">
-        <span>得点: 5枚</span>
-        <span>EV: 0枚</span>
-      </div>
-    </div>
+  <!-- 入室・待機画面 -->
+  <div id="joinScreen" class="join-screen">
+    <h2>炭鉱夫 Online</h2>
+    <input type="text" id="playerNameInput" placeholder="プレイヤー名を入力" />
+    <button id="joinBtn">ゲームに参加</button>
+    <button id="startBtn" style="display:none; background: #2e8b57;">ゲームを開始する (3名以上)</button>
   </div>
 
-  <!-- 中央：山札エリア -->
+  <!-- 対戦画面 -->
+  <div class="opponents-area" id="opponentsArea"></div>
+
   <div class="field-area">
-    <div class="game-log">あなたのターンです</div>
+    <div class="game-log" id="logBox">ゲーム開始を待っています...</div>
     <div class="decks-container">
-      <div class="deck deck-red">
-        赤山札
-        <span class="deck-count">15</span>
-      </div>
-      <div class="deck deck-num">
-        数字山札
-        <span class="deck-count">12</span>
-      </div>
-      <div class="deck deck-event">
-        イベント山札
-        <span class="deck-count">8</span>
-      </div>
+      <div class="deck deck-mine">鉱山<span class="deck-count" id="mineCount">21</span></div>
+      <div class="deck deck-action">行動<span class="deck-count" id="actionCount">20</span></div>
+      <div class="deck deck-event">イベント<span class="deck-count" id="eventCount">12</span></div>
     </div>
   </div>
 
-  <!-- 下部：自分の手札＆操作パネル -->
   <div class="my-area">
-    <!-- 自分だけが見える得点カード -->
-    <div class="hand-section">
-      <div class="section-title">自分の得点カード（非公開）</div>
-      <div class="cards-scroll">
-        <div class="card card-score">1点</div>
-        <div class="card card-score">2点</div>
-        <div class="card card-joker">JOKER</div>
-      </div>
-    </div>
+    <div style="font-size: 0.75rem; color: #888;">自分の得点カード（自分のみ公開）</div>
+    <div class="cards-scroll" id="myScoreCards"></div>
 
-    <!-- 保持しているイベントカード -->
-    <div class="hand-section">
-      <div class="section-title">所持イベント（使用するカードを選択）</div>
-      <div class="cards-scroll">
-        <div class="card card-event">調査②</div>
-        <div class="card card-event">賄賂①</div>
-      </div>
-    </div>
+    <div style="font-size: 0.75rem; color: #888;">所持イベント（タップで使用）</div>
+    <div class="cards-scroll" id="myEventCards"></div>
 
-    <!-- ターン内のアクションボタン -->
-    <div class="action-panel">
-      <button class="btn btn-draw">数字山札を1枚引く</button>
-    </div>
+    <button class="btn" id="drawBtn" disabled>行動山札から1枚引く</button>
   </div>
 
+  <script>
+    const socket = io();
+
+    const joinScreen = document.getElementById('joinScreen');
+    const playerNameInput = document.getElementById('playerNameInput');
+    const joinBtn = document.getElementById('joinBtn');
+    const startBtn = document.getElementById('startBtn');
+    const drawBtn = document.getElementById('drawBtn');
+
+    joinBtn.addEventListener('click', () => {
+      const name = playerNameInput.value.trim();
+      if (name) {
+        socket.emit('join_game', name);
+        joinBtn.style.display = 'none';
+        playerNameInput.style.display = 'none';
+        startBtn.style.display = 'block';
+      }
+    });
+
+    startBtn.addEventListener('click', () => {
+      socket.emit('start_game');
+    });
+
+    drawBtn.addEventListener('click', () => {
+      socket.emit('draw_action_deck');
+    });
+
+    socket.on('state_update', (state) => {
+      if (state.isGameStarted) {
+        joinScreen.style.display = 'none';
+      }
+
+      // 山札枚数
+      document.getElementById('mineCount').innerText = state.deckCounts.mine;
+      document.getElementById('actionCount').innerText = state.deckCounts.action;
+      document.getElementById('eventCount').innerText = state.deckCounts.event;
+
+      // ログ
+      if (state.logs.length > 0) {
+        document.getElementById('logBox').innerText = state.logs[state.logs.length - 1];
+      }
+
+      // 他プレイヤー状況
+      const oppArea = document.getElementById('opponentsArea');
+      oppArea.innerHTML = '';
+      state.opponents.forEach(opp => {
+        const div = document.createElement('div');
+        div.className = `opponent-card ${opp.isCurrentTurn ? 'active' : ''}`;
+        div.innerHTML = `<div>${opp.name}</div><div>得点:${opp.scoreCardCount}枚 EV:${opp.eventCardCount}枚</div>`;
+        oppArea.appendChild(div);
+      });
+
+      // 自分の得点カード
+      const scoreBox = document.getElementById('myScoreCards');
+      scoreBox.innerHTML = '';
+      state.myHand.scoreCards.forEach(c => {
+        const card = document.createElement('div');
+        card.className = `card ${c.type === 'bomb' ? 'card-bomb' : 'card-score'}`;
+        card.innerText = c.value + (c.type === 'score' ? '点' : '');
+        scoreBox.appendChild(card);
+      });
+
+      // 自分のイベントカード
+      const eventBox = document.getElementById('myEventCards');
+      eventBox.innerHTML = '';
+      state.myHand.eventCards.forEach((c, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card card-event';
+        card.innerText = c.name;
+        if (state.isMyTurn) {
+          card.onclick = () => socket.emit('use_event', idx);
+        } else {
+          card.style.opacity = '0.6';
+        }
+        eventBox.appendChild(card);
+      });
+
+      // ターン制御ボタン
+      drawBtn.disabled = !state.isMyTurn;
+    });
+
+    socket.on('show_mine_cards', (mineCards) => {
+      alert('【調査結果】鉱山の中身:\n' + mineCards.join(', '));
+    });
+
+    socket.on('error_message', (msg) => alert(msg));
+  </script>
 </body>
 </html>
